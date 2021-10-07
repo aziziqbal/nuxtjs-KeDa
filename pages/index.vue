@@ -24,68 +24,98 @@
       <v-tab class="tab-title">
         Select
       </v-tab>
-      <v-tab class="tab-title">
-        Sliders
-      </v-tab>
-      <v-tab class="tab-title">
-        Switches
-      </v-tab>
     </v-tabs>
 
     <v-tabs-items v-model="tab">
       <v-tab-item>
         <div class="pd-20">
-          Selected : {{ radio1 }}
-          <v-radio-group v-model="radio1">
-            <radio defaults name="Radio Button 1" value="1" />
-            <radio defaults name="Radio Button 2" value="2" />
-          </v-radio-group>
+          <div class="input-group">
+            <RadioButton v-for="option in items1" :option="option" :key="option">
+              <template slot="label">
+                {{ option }}
+              </template>
+            </RadioButton>
+          </div>
+        </div>
+      </v-tab-item>
+      <v-tab-item>
+        <div class="pd-20">
+          <div class="input-group">
+            <RadioButton v-for="(option, index) in items2" :option="option" :key="index"  >
+              <template slot="label">
+                <input class="input-group2" :value="option">
+              </template>
+            </RadioButton>
+          </div>
+        </div>
+      </v-tab-item>
+      <v-tab-item>
+        <div class="pd-20">
+          <div class="input-group">
+            <RadioButton v-for="(option, index) in items3" :option="option" :key="index"  >
+              <template slot="label" >
+                  <v-menu
+                    ref="menu"
+                    v-model="option.menu"
+                    :close-on-content-click="false"
+                    :return-value.sync="date"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="option.text"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                        outlined
+                        dense
+                        style="width:200px;"
+                        hide-details
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                        v-model="option.text"
+                      no-title
+                      scrollable
+                    >
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        text
+                        color="primary"
+                        @click="option.menu = false"
+                      >
+                        Cancel
+                      </v-btn>
+                      <v-btn
+                        text
+                        color="primary"
+                        @click="option.menu = false"
+                      >
+                        OK
+                      </v-btn>
+                    </v-date-picker>
+                  </v-menu>
+              </template>
+            </RadioButton>
+          </div>
         </div>
       </v-tab-item>
 
       <v-tab-item>
         <div class="pd-20">
-          Selected : {{ radio2 }}
-          <v-radio-group v-model="radio2">
-            <radio texts name="Radio Button 1" value="1" />
-            <radio texts name="Radio Button 2" value="2" />
-          </v-radio-group>
-        </div>
-      </v-tab-item>
-      <v-tab-item>
-        <div class="pd-20">
-          Selected : {{ radio3 }}
-          <v-radio-group v-model="radio3">
-            <radio dates />
-            <radio dates />
-          </v-radio-group>
-        </div>
-      </v-tab-item>
-      <v-tab-item>
-        <div class="pd-20">
-          Selected : {{ radio4 }}
-          <v-radio-group v-model="radio4">
-            <radio selects :data="items1"/>
-            <radio selects :data="items2"/>
-          </v-radio-group>
-        </div>
-      </v-tab-item>
-      <v-tab-item>
-        <div class="pd-20">
-          Selected : {{ radio5 }}
-          <v-radio-group v-model="radio5">
-            <radio sliders min="20" max="100" value="30"/>
-            <radio sliders min="10" max="80" value="60"/>
-          </v-radio-group>
-        </div>
-      </v-tab-item>
-      <v-tab-item>
-        <div class="pd-20">
-          Selected : {{ radio6 }}
-          <v-radio-group v-model="radio6">
-            <radio switches :switchvalue="false" />
-            <radio switches :switchvalue="true" />
-          </v-radio-group>
+          <div class="input-group">
+            <RadioButton v-for="(option, index) in items2" :option="option" :key="index"  >
+              <template slot="label">
+                <select class="input-select">
+                  <option>A</option>
+                  <option>B</option>
+                  <option>C</option>
+                </select>
+              </template>
+            </RadioButton>
+          </div>
         </div>
       </v-tab-item>
     </v-tabs-items>
@@ -95,21 +125,20 @@
   export default {
     data () {
       return {
-        radio1: 1,
-        radio2: 1,
-        radio3: 1,
-        radio4: 1,
-        radio5: 1,
-        radio6: 1,
-        tab: null,
+        tab: '',
         items1: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'],
-        items2: ['Januari', 'Februari', 'Maret']
+        items2: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni'],
+        date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+        items3: [
+          { text: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10), menu: false },
+          { text: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10), menu: false },
+          { text: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10), menu: false },
+        ],
       }
     },
   }
 </script>
 <style scoped>
-/* Helper classes */
 .bg {
   background-color: #982e2d;
 }
@@ -128,5 +157,23 @@
 }
 .pd-20 {
   padding:20px;
+}
+.input-group {
+  width: 100%;
+  margin: 20px auto;
+  padding: 15px 20px;
+  border-radius: 8px;
+}
+.input-group2 {
+  width:150px;
+  border:1px solid black;
+  padding:10px;
+  margin-left:10px;
+}
+.input-select {
+  width:150px;
+  border:1px solid black;
+  padding:10px;
+  margin-left:10px;
 }
 </style>
